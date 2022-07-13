@@ -1,20 +1,62 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { StyleSheet, Text, View, SafeAreaView, TextInput, Button, FlatList, Platform, StatusBar } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
+type Props = {
+  text: string
+}
+
+type Todo = {
+  id: number
+  text: string
+}
+
+const Item: React.FC<Props> = ({text}) => {
+  return (
+    <View>
+      <Text>{text}</Text>
+    </View>
+  )
+}
 
 export default function App() {
+  const [text, onChangeText] = React.useState<string>("")
+  const [todos, setTodos] = React.useState<Array<Todo>>([])
+  const [id, setId] = React.useState<number>(0)
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.container}>
+        <StatusBar barStyle="dark-content" backgroundColor="white" />
+        <TextInput 
+          onChangeText={t => onChangeText(t)} 
+          value={text} 
+          style={styles.input} 
+        />
+        <Button 
+          title='Add'
+          onPress={() => {
+            onChangeText("")
+            setTodos(oldTodos => [...oldTodos, {id:id, text:text}])
+            setId(id+1)
+          }}
+        />
+        <FlatList
+          data={todos}
+          renderItem={({item}) => <Item text={item.text} />}
+        />
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: 'center'
   },
+  input: {
+    borderColor: "#eee",
+    borderWidth: 1,
+    height: 40,
+    width: "80%",
+  }
 });
