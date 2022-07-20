@@ -8,8 +8,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 type RootStackParamList = {
   Home: undefined;
   Details: {
-    itemId: number,
-    otherParam: string
+    todos: Array<Todo>
   };
 }
 
@@ -55,10 +54,7 @@ function HomeScreen({navigation}: Props) {
       <StatusBar barStyle="dark-content" backgroundColor="white" />
       <Button
         title='Go to Details'
-        onPress={() => { navigation.navigate('Details', {
-          itemId: 86,
-          otherParam: 'anything you want here',
-        });
+        onPress={() => { navigation.navigate('Details', {todos});
       }}
       />
       <TextInput
@@ -101,12 +97,16 @@ function HomeScreen({navigation}: Props) {
 }
 
 function DetailsScreen({route, navigation}: Props) {
-  const {itemId, otherParam} = route.params
+  const {todos} = route.params
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>Details Screen</Text>
-      <Text>itemId: {JSON.stringify(itemId)}</Text>
-      <Text>itemId: {JSON.stringify(otherParam)}</Text>
+      <FlatList
+        data={todos.filter(todo => todo.active)}
+        renderItem={({item}) =>
+          <Text>{item.text}</Text>
+        }
+      />
     </View>
   )
 }
@@ -133,5 +133,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     height: 40,
     width: "80%",
+  },
+  button: {
+    backgroundColor: 'transparent'
   }
 });
